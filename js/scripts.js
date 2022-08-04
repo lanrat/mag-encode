@@ -1,13 +1,17 @@
 
-// https://github.com/salmg/ViolentMag/blob/9b4f666779c7b0430bb8baf12155e1b62ccbc23b/MalfunctionMag.py#L273
-
 const peak = 32767; //  maximum value of a 16-bit signed integer.
 
+// default values
+var config = {
+    padding: 25, // magstripe leading & trailing 0s
+    frequency: 32, // Samples per bit, recommended [5-45] (was 15)
+    encode_reverse: true,
+};
 
-
-var padding = 25; // magstripe leading & trailing 0s
-var frequency = 15;  // Samples per bit, recommended [5-45]
-var encode_reverse = true;
+document.getElementById("padding").value = config.padding;
+document.getElementById("frequency").value = config.frequency;
+document.getElementById("frequency").nextElementSibling.value = config.frequency;
+document.getElementById("reverse").checked = config.encode_reverse;
 
 function test() {
     var t1 = test10();
@@ -21,12 +25,13 @@ function test10() {
     return out == expected;
 }
 
-
 function encodeData() {
     // get settings
-    padding = document.getElementById("padding").value;
-    frequency = document.getElementById("frequency").value;
-    encode_reverse = document.getElementById("reverse").value;
+    config.padding = document.getElementById("padding").value;
+    config.frequency = document.getElementById("frequency").value;
+    config.encode_reverse = document.getElementById("reverse").checked;
+
+    console.log("config:", config);
 
     // get data
     var data = document.getElementById("magstripe").value;
@@ -107,12 +112,11 @@ function encodeMag(d1) {
     }
 
     // add padding
-    for (var i = 0; i < padding; i++) {
+    for (var i = 0; i < config.padding; i++) {
         output += '0'
     }
 
     var parity = 0;
-
     for (let c of d1) {
         //console.log("char: ", c, ", charcode:", c.charCodeAt(0));
         var raw = c.charCodeAt(0) - base;
@@ -142,7 +146,7 @@ function encodeMag(d1) {
 
     // add padding
     output += String.fromCharCode((parity % 2)+ '0'.charCodeAt(0));
-    for (var x = 0; x < padding; x++) {
+    for (var x = 0; x < config.padding; x++) {
         output += '0'
     }
 
@@ -151,7 +155,6 @@ function encodeMag(d1) {
 
 // program to reverse a string
 function reverseString(str) {
-
     // empty string
     let newString = "";
     for (let i = str.length - 1; i >= 0; i--) {
@@ -163,20 +166,19 @@ function reverseString(str) {
 function generateWav(data) {
     var wave_data = [];
 
-
     var encode = function(data) {
         var writedata = peak;
         for (const b of data) {
             if (b == '1') {
                 for (var x = 0; x < 2; x++) {
                     writedata = -writedata;
-                    for (var y = 0; y < (frequency / 4); y++) {
+                    for (var y = 0; y < (config.frequency / 4); y++) {
                         wave_data.push(writedata);
                     }
                 }
             }else { // b == '0'
                 writedata = -writedata;
-                for (var y = 0; y < (frequency / 2); y++) {
+                for (var y = 0; y < (config.frequency / 2); y++) {
                     wave_data.push(writedata);
                 }
             }
@@ -188,12 +190,11 @@ function generateWav(data) {
     // TODO support multiple tracks in place of reverse
 
     // TODO check that the card ends in a ';' to allow adding reverse
-    if (encode_reverse) {
+    if (config.encode_reverse) {
         console.log("edding reverse encoding");
         var reverseData = reverseString(data);
         encode(reverseData);
     }
-
 
     var data_buffer = new Int16Array(wave_data);
 
@@ -205,9 +206,7 @@ function generateWav(data) {
         bytesPerSample: 2,
     };
     var wavHdr = buildWaveHeader(wav_opts);
-
     var merged = appendArrayBuffers(wavHdr, data_buffer.buffer)
-
     return merged;
 }
 
@@ -217,19 +216,6 @@ function appendArrayBuffers(buffer1, buffer2) {
     tmp.set(new Uint8Array(buffer1), 0);
     tmp.set(new Uint8Array(buffer2), buffer1.byteLength);
     return tmp.buffer;
-}
-
-function playTest(audioBuffer) {
-    var context = new (window.AudioContext || window.webkitAudioContext)();
-    // Create a source:
-    // This represents a playback head.
-    const source = context.createBufferSource();
-    // Give it the audio data we loaded:
-    source.buffer = audioBuffer;
-    // Plug it into the output:
-    source.connect(context.destination);
-    // And off we go!
-    source.start();
 }
 
 
