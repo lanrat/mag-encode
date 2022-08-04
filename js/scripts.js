@@ -75,6 +75,12 @@ function encodeData() {
 
     // get data
     console.log("input data: ", config.data1);
+
+    if (config.data1.length == 0) {
+        console.log("no data to encode");
+        return;
+    }
+
     var bin = encodeMag(config.data1);
 
 
