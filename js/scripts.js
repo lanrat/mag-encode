@@ -8,14 +8,52 @@ var config = {
     reverse_swipe: true,
     reverse: false,
     loop: 1,
+    data1: "%B4929555123456789^MALFUNCTION/MAJOR ^0902201010000000000000970000000?",
 };
 
-document.getElementById("padding").value = config.padding;
-document.getElementById("frequency").value = config.frequency;
-document.getElementById("frequency").nextElementSibling.value = config.frequency;
-document.getElementById("reverse_swipe").checked = config.reverse_swipe;
-document.getElementById("reverse").checked = config.reverse;
-document.getElementById("loop").value = config.loop;
+setConfigFromUI();
+
+function setConfigFromUI() {
+    readConfigFromHash();
+    document.getElementById("padding").value = config.padding;
+    document.getElementById("frequency").value = config.frequency;
+    document.getElementById("frequency").nextElementSibling.value = config.frequency;
+    document.getElementById("reverse_swipe").checked = config.reverse_swipe;
+    document.getElementById("reverse").checked = config.reverse;
+    document.getElementById("loop").value = config.loop;
+    document.getElementById("data1").value = config.data1;
+}
+
+
+function setHashFromConfig() {
+    var str = JSON.stringify(config);
+    //console.log(str);
+    var u = encodeURIComponent(str);
+    //console.log(u);
+    window.location.hash = u;
+    //return u;
+}
+
+function readConfigFromHash() {
+    try {
+        var str = decodeURIComponent(window.location.hash.substring(1));
+        if (str.length > 0) {
+            config = JSON.parse(str);
+        }
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+function readConfig() {
+    config.padding = document.getElementById("padding").value;
+    config.frequency = document.getElementById("frequency").value;
+    config.reverse_swipe = document.getElementById("reverse_swipe").checked;
+    config.reverse = document.getElementById("reverse").checked;
+    config.loop = document.getElementById("loop").value;
+    config.data1 = document.getElementById("data1").value;
+}
+
 
 function test() {
     var t1 = test10();
@@ -31,18 +69,13 @@ function test10() {
 
 function encodeData() {
     // get settings
-    config.padding = document.getElementById("padding").value;
-    config.frequency = document.getElementById("frequency").value;
-    config.reverse_swipe = document.getElementById("reverse_swipe").checked;
-    config.reverse = document.getElementById("reverse").checked;
-    config.loop = document.getElementById("loop").value;
+    readConfig();
 
     console.log("config:", config);
 
     // get data
-    var data = document.getElementById("magstripe").value;
-    console.log("input data: ", data);
-    var bin = encodeMag(data);
+    console.log("input data: ", config.data1);
+    var bin = encodeMag(config.data1);
 
 
     console.log("binary data: ", bin);

@@ -40,12 +40,13 @@
   <input type="number" id="loop" name="loop" min="1" max="10" value="1">
   <br>
 
-  <label for="magstripe">Data: </label>
-  <input id="magstripe" name="magstripe" type="text" size=100 value="%B4929555123456789^MALFUNCTION/MAJOR ^0902201010000000000000970000000?" placeholder="%1234567890?">
+  <label for="data1">Data: </label>
+  <input id="data1" name="data1" type="text" size=100 value="" placeholder="%1234567890?">
   <br>
 
   <button onclick="encodeButton()">Encode!</button>
   <button onclick="downloadButton()">Download</button>
+  <button onclick="setHashFromConfig()">Perm-link</button>
   <!-- <button onclick="test()">Test</button> -->
   <br>
 
@@ -53,7 +54,7 @@
   <p id="wav_data"></p>
 
 
-  <p><a href="https://github.com/lanrat/mag-encode">Source Code</a></p>
+  <p>All logic is client side. Nothing is sent to the server. <a href="https://github.com/lanrat/mag-encode">Source Code</a></p>
 
   <script src="js/scripts.js"></script>
 </body>
