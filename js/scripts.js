@@ -5,13 +5,15 @@ const peak = 32767; //  maximum value of a 16-bit signed integer.
 var config = {
     padding: 25, // magstripe leading & trailing 0s
     frequency: 32, // Samples per bit, recommended [5-45] (was 15)
-    encode_reverse: true,
+    reverse_swipe: true,
+    reverse: false,
 };
 
 document.getElementById("padding").value = config.padding;
 document.getElementById("frequency").value = config.frequency;
 document.getElementById("frequency").nextElementSibling.value = config.frequency;
-document.getElementById("reverse").checked = config.encode_reverse;
+document.getElementById("reverse_swipe").checked = config.reverse_swipe;
+document.getElementById("reverse").checked = config.reverse;
 
 function test() {
     var t1 = test10();
@@ -29,7 +31,8 @@ function encodeData() {
     // get settings
     config.padding = document.getElementById("padding").value;
     config.frequency = document.getElementById("frequency").value;
-    config.encode_reverse = document.getElementById("reverse").checked;
+    config.reverse_swipe = document.getElementById("reverse_swipe").checked;
+    config.reverse = document.getElementById("reverse").checked;
 
     console.log("config:", config);
 
@@ -37,6 +40,8 @@ function encodeData() {
     var data = document.getElementById("magstripe").value;
     console.log("input data: ", data);
     var bin = encodeMag(data);
+
+
     console.log("binary data: ", bin);
     document.getElementById("binary_data").innerText = bin;
     var wav = generateWav(bin);
@@ -150,6 +155,10 @@ function encodeMag(d1) {
         output += '0'
     }
 
+    if (config.reverse) {
+        output = reverseString(output);
+    }
+
     return output;
 }
 
@@ -190,7 +199,7 @@ function generateWav(data) {
     // TODO support multiple tracks in place of reverse
 
     // TODO check that the card ends in a ';' to allow adding reverse
-    if (config.encode_reverse) {
+    if (config.reverse_swipe) {
         console.log("edding reverse encoding");
         var reverseData = reverseString(data);
         encode(reverseData);
