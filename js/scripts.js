@@ -42,6 +42,7 @@ function readConfigFromHash() {
         }
     } catch (err) {
         console.error(err);
+        window.location.hash = "";
     }
 }
 
