@@ -18,12 +18,29 @@
 
 <body>
   <h1>Web Based magnetic stripe card encoder</h1>
-  <p>Enter data here!</p>
-  <input id="magstripe" name="magstripe" type="text" size=100 value="%B4929555123456789^MALFUNCTION/MAJOR ^0902201010000000000000970000000?" placeholder="magstripe data">
+
+  <label for="padding">Padding: </label>
+  <input type="number" id="padding" name="quantity" min="0" max="50" value="25">
   <br>
+
+  <label for="frequency">Frequency: </label>
+  <input type="range" id="frequency" name="frequency" min="5" max="45" value="15" oninput="this.nextElementSibling.value = this.value">
+  <output>15</output>
+  <br>
+
+  <label for="reverse">Reverse Encode: </label>
+  <input type="checkbox" id="reverse" name="reverse" checked>
+  <br>
+
+  <label for="magstripe">Data: </label>
+  <input id="magstripe" name="magstripe" type="text" size=100 value="%B4929555123456789^MALFUNCTION/MAJOR ^0902201010000000000000970000000?" placeholder="%1234567890?">
+  <br>
+
   <button onclick="encodeButton()">Encode!</button>
   <button onclick="downloadButton()">Download</button>
   <button onclick="test()">Test</button>
+  <br>
+
   <pre id="binary_data" style="background-color: #a4a4a4; color:#000000; padding:1em; max-width:80ch; white-space: pre-wrap; word-wrap:break-word;"></pre>
   <p id="wav_data"></p>
 

@@ -1,13 +1,13 @@
 
 // https://github.com/salmg/ViolentMag/blob/9b4f666779c7b0430bb8baf12155e1b62ccbc23b/MalfunctionMag.py#L273
 
-
-const padding = 25; // magstripe leading & trailing 0s
-
 const peak = 32767; //  maximum value of a 16-bit signed integer.
-const frequency = 15;  // Samples per bit, recommended [5-45]
 
-const encode_reverse = true;
+
+
+var padding = 25; // magstripe leading & trailing 0s
+var frequency = 15;  // Samples per bit, recommended [5-45]
+var encode_reverse = true;
 
 function test() {
     var t1 = test10();
@@ -23,6 +23,12 @@ function test10() {
 
 
 function encodeData() {
+    // get settings
+    padding = document.getElementById("padding").value;
+    frequency = document.getElementById("frequency").value;
+    encode_reverse = document.getElementById("reverse").value;
+
+    // get data
     var data = document.getElementById("magstripe").value;
     console.log("input data: ", data);
     var bin = encodeMag(data);
