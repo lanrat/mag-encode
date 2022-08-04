@@ -7,6 +7,7 @@ var config = {
     frequency: 32, // Samples per bit, recommended [5-45] (was 15)
     reverse_swipe: true,
     reverse: false,
+    loop: 1,
 };
 
 document.getElementById("padding").value = config.padding;
@@ -14,6 +15,7 @@ document.getElementById("frequency").value = config.frequency;
 document.getElementById("frequency").nextElementSibling.value = config.frequency;
 document.getElementById("reverse_swipe").checked = config.reverse_swipe;
 document.getElementById("reverse").checked = config.reverse;
+document.getElementById("loop").value = config.loop;
 
 function test() {
     var t1 = test10();
@@ -33,6 +35,7 @@ function encodeData() {
     config.frequency = document.getElementById("frequency").value;
     config.reverse_swipe = document.getElementById("reverse_swipe").checked;
     config.reverse = document.getElementById("reverse").checked;
+    config.loop = document.getElementById("loop").value;
 
     console.log("config:", config);
 
@@ -62,7 +65,10 @@ function encodeData() {
 
 function encodeButton() {
     var wav = encodeData();
-    playWave(wav);
+
+    for (var i = 0; i < config.loop; i++) {
+        playWave(wav);
+    }
 }
 
 function downloadButton() {
@@ -82,7 +88,7 @@ function download(filename, data) {
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
-  }
+}
 
 function encodeMag(d1) {
     var lrc = [];
@@ -92,7 +98,7 @@ function encodeMag(d1) {
     var base = 32;
     var max = 63;
 
-    changeTrack = function(t) {
+    changeTrack = function (t) {
         bits = 7;
         base = 32;
         max = 63;
@@ -102,7 +108,7 @@ function encodeMag(d1) {
             max = 15;
         }
     }
-    
+
     // track changing
     if (d1[0] == '%') {
         console.log("using track 1 encoding");
@@ -132,25 +138,25 @@ function encodeMag(d1) {
         }
 
         parity = 1;
-        for (var y = 0; y < bits-1; y++) {
+        for (var y = 0; y < bits - 1; y++) {
             //console.log("adding Str:", String(raw >> y & 1));
             output += String(raw >> y & 1);
             parity += raw >> y & 1;
             lrc[y] = lrc[y] ^ (raw >> y & 1)
         }
 
-        output += String.fromCharCode((parity % 2)+ '0'.charCodeAt(0));
+        output += String.fromCharCode((parity % 2) + '0'.charCodeAt(0));
     }
 
     parity = 1;
     // add parity bits
-    for (var x = 0; x < bits-1; x++) {
+    for (var x = 0; x < bits - 1; x++) {
         output += String.fromCharCode(lrc[x] + '0'.charCodeAt(0));
         parity += lrc[x]
     }
 
     // add padding
-    output += String.fromCharCode((parity % 2)+ '0'.charCodeAt(0));
+    output += String.fromCharCode((parity % 2) + '0'.charCodeAt(0));
     for (var x = 0; x < config.padding; x++) {
         output += '0'
     }
@@ -175,7 +181,7 @@ function reverseString(str) {
 function generateWav(data) {
     var wave_data = [];
 
-    var encode = function(data) {
+    var encode = function (data) {
         var writedata = peak;
         for (const b of data) {
             if (b == '1') {
@@ -185,7 +191,7 @@ function generateWav(data) {
                         wave_data.push(writedata);
                     }
                 }
-            }else { // b == '0'
+            } else { // b == '0'
                 writedata = -writedata;
                 for (var y = 0; y < (config.frequency / 2); y++) {
                     wave_data.push(writedata);
@@ -231,12 +237,12 @@ function appendArrayBuffers(buffer1, buffer2) {
 function playWave(wave) {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     var audioCtx = new AudioContext();
-   audioCtx.decodeAudioData(wave).then(buffer => {
+    audioCtx.decodeAudioData(wave.slice(0)).then(buffer => {
         var track = audioCtx.createBufferSource();
         track.buffer = buffer;
         track.connect(audioCtx.destination);
         track.start(0);
-   });
+    });
 
 }
 
@@ -291,26 +297,26 @@ function buildWaveHeader(opts) {
 }
 
 function hexdump(buffer, blockSize) {
-	
-	if(typeof buffer === 'string'){
-		console.log("hex: buffer is string");
-		//do nothing
-	}else if(buffer instanceof ArrayBuffer && buffer.byteLength !== undefined){
-		console.log("hex: buffer is ArrayBuffer");
-		buffer = String.fromCharCode.apply(String, [].slice.call(new Uint8Array(buffer)));
-	}else if(Array.isArray(buffer)){
-		console.log("hex: buffer is Array");
-		buffer = String.fromCharCode.apply(String, buffer);
-	}else if (buffer.constructor === Uint8Array) {
-		console.log("hex: buffer is Uint8Array");
-		buffer = String.fromCharCode.apply(String, [].slice.call(buffer));
-	}else{
-		console.log("hex: Error: buffer is unknown...");
-		return false;
-	}
-	
-    
-	blockSize = blockSize || 16;
+
+    if (typeof buffer === 'string') {
+        console.log("hex: buffer is string");
+        //do nothing
+    } else if (buffer instanceof ArrayBuffer && buffer.byteLength !== undefined) {
+        console.log("hex: buffer is ArrayBuffer");
+        buffer = String.fromCharCode.apply(String, [].slice.call(new Uint8Array(buffer)));
+    } else if (Array.isArray(buffer)) {
+        console.log("hex: buffer is Array");
+        buffer = String.fromCharCode.apply(String, buffer);
+    } else if (buffer.constructor === Uint8Array) {
+        console.log("hex: buffer is Uint8Array");
+        buffer = String.fromCharCode.apply(String, [].slice.call(buffer));
+    } else {
+        console.log("hex: Error: buffer is unknown...");
+        return false;
+    }
+
+
+    blockSize = blockSize || 16;
     var lines = [];
     var hex = "0123456789ABCDEF";
     for (var b = 0; b < buffer.length; b += blockSize) {
@@ -322,7 +328,7 @@ function hexdump(buffer, blockSize) {
         }).join("");
         codes += "   ".repeat(blockSize - block.length);
         var chars = block.replace(/[\x00-\x1F\x20]/g, '.');
-        chars +=  " ".repeat(blockSize - block.length);
+        chars += " ".repeat(blockSize - block.length);
         lines.push(addr + " " + codes + "  " + chars);
     }
     return lines.join("\n");
