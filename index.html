@@ -1,0 +1,32 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>A Basic HTML5 Template</title>
+  <meta name="description" content="Web Magstripe Encoder">
+
+  <!-- <link rel="icon" href="/favicon.ico">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png"> -->
+
+  <link rel="stylesheet" href="css/styles.css?v=1.0">
+
+</head>
+
+<body>
+  <h1>Web Based magnetic stripe card encoder</h1>
+  <p>Enter data here!</p>
+  <input id="magstripe" name="magstripe" type="text" size=100 value="%B4929555123456789^MALFUNCTION/MAJOR ^0902201010000000000000970000000?" placeholder="magstripe data">
+  <br>
+  <button onclick="encodeButton()">Encode!</button>
+  <button onclick="downloadButton()">Download</button>
+  <button onclick="test()">Test</button>
+  <pre id="binary_data" style="background-color: #a4a4a4; color:#000000; padding:1em; max-width:80ch; white-space: pre-wrap; word-wrap:break-word;"></pre>
+  <p id="wav_data"></p>
+
+  <script src="js/scripts.js"></script>
+</body>
+</html>
