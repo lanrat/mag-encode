@@ -1,6 +1,7 @@
 <!doctype html>
 
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,34 +12,36 @@
   <!-- <link rel="icon" href="/favicon.ico">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png"> -->
-
-  <link rel="stylesheet" href="css/styles.css?v=1.0">
-
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
 </head>
 
 <body>
   <h1>Web Based magnetic stripe card encoder</h1>
 
-  <label for="padding">Padding: </label>
-  <input type="number" id="padding" name="quantity" min="0" max="50" value="25">
-  <br>
+  <details>
+    <summary>Advanced Settings</summary>
 
-  <label for="frequency">Frequency: </label>
-  <input type="range" id="frequency" name="frequency" min="5" max="45" oninput="this.nextElementSibling.value = this.value">
-  <output></output>
-  <br>
+    <label for="padding">Padding: </label>
+    <input type="number" id="padding" name="quantity" min="0" max="50" value="25">
+    <br>
 
-  <label for="reverse_swipe">Include Reverse Swipe: </label>
-  <input type="checkbox" id="reverse_swipe" name="reverse_swipe" checked>
-  <br>
+    <label for="frequency">Frequency: </label>
+    <input type="range" id="frequency" name="frequency" min="5" max="45"
+      oninput="this.nextElementSibling.value = this.value">
+    <output></output>
+    <br>
 
-  <label for="reverse">Reverse Encode: </label>
-  <input type="checkbox" id="reverse" name="reverse" checked>
-  <br>
+    <label for="reverse_swipe">Include Reverse Swipe: </label>
+    <input type="checkbox" id="reverse_swipe" name="reverse_swipe" checked>
+    <br>
 
-  <label for="loop">Loop: </label>
-  <input type="number" id="loop" name="loop" min="1" max="10" value="1">
-  <br>
+    <label for="reverse">Reverse Encode: </label>
+    <input type="checkbox" id="reverse" name="reverse" checked>
+    <br>
+
+    <label for="loop">Loop: </label>
+    <input type="number" id="loop" name="loop" min="1" max="10" value="1">
+  </details>
 
   <label for="data1">Data: </label>
   <input id="data1" name="data1" type="text" size=100 value="" placeholder="%1234567890?">
@@ -50,12 +53,15 @@
   <!-- <button onclick="test()">Test</button> -->
   <br>
 
-  <pre id="binary_data" style="background-color: #a4a4a4; color:#000000; padding:1em; max-width:80ch; white-space: pre-wrap; word-wrap:break-word;"></pre>
-  <p id="wav_data"></p>
+  <pre style="white-space: pre-wrap; word-wrap:break-word;"><code id="binary_data"></code></pre>
+  
+   <!-- <p id="wav_data"></p> -->
 
 
-  <p>All logic is client side. Nothing is sent to the server. <a href="https://github.com/lanrat/mag-encode">Source Code</a></p>
+  <p>All logic is client side. Nothing is sent to the server. <a href="https://github.com/lanrat/mag-encode">Source
+      Code</a></p>
 
   <script src="js/scripts.js"></script>
 </body>
+
 </html>
